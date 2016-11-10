@@ -1,0 +1,10 @@
+{
+  "events" :
+  [],
+
+  "prepare" : [],
+
+  "startOutput" : [],
+  "stopOutput" : [],
+  "looseOutput" : []
+}

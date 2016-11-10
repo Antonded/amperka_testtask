@@ -1,0 +1,41 @@
+//
+   Created by danilaeremin on 25.02.16.
+
+mixin slider(nodeId, IO_id, minVal, maxVal, val, callback)
+    div(style="width:270px;", align="left")
+        input.slider(type='text', data-slider-min=minVal, data-slider-max=maxVal, data-slider-step='1', data-slider-value=val, data-slider-tooltip='hide',style="width:200px", id=nodeId+"Slider"+IO_id, node=nodeId, IO=IO_id)
+        | &nbsp;&nbsp;&nbsp;
+        span(style="width:50px", node=nodeId, IO=IO_id, type="value")
+            = val
+    script(type='text/javascript').
+        var slider!{nodeId}!{IO_id} = $("#!{nodeId}Slider!{IO_id}");
+        slider!{nodeId}!{IO_id}.slider();
+        slider!{nodeId}!{IO_id}.on("slide", function (slideEvt) {
+            !{callback}('!{nodeId}','!{IO_id}',slideEvt.value);
+            $("[node='!{nodeId}'][IO='!{IO_id}'][type='value']").text(slideEvt.value);
+        });
+
+mixin toolbar(nodeId, IO_id, visual, values, activeValue, callback)
+    .btn-toolbar.showcase-btn.pull-right(role='toolbar')
+        .btn-group.btn-group-sm(role="group")
+            each val, index in visual
+                button.btn.btn-default.btn-sm(type='button', node=nodeId, IO=IO_id, value=values[index], onclick=callback+"(this)")
+                    = val
+    script(type='text/javascript').
+        $("[node='!{nodeId}'][IO='!{IO_id}'][value='!{activeValue}']").toggleClass('btn-default btn-info');
+
+mixin combobox(nodeId, IO_id, visual, values, activeValue, callback)
+    - activeValue = values.indexOf(activeValue)
+    - if (activeValue < 0) activeValue = 0
+
+    .btn-group
+        button.btn.btn-info.btn-sm(type='button',node=nodeId, IO=IO_id, value=values[activeValue], onclick=callback+"(this);")
+            = visual[activeValue]
+        button.btn.btn-info.btn-sm.dropdown-toggle(type='button', data-toggle='dropdown') &nbsp;
+            span.caret
+            span.sr-only Toggle Dropdown
+        ul.dropdown-menu(role='menu')
+            each val, index in visual
+                li
+                    a(href='#', onclick='var obj = $("[node=\''+nodeId+'\'][IO=\''+IO_id+'\']"); obj.val(\''+values[index]+'\');obj.text(\''+val+'\');return false;')
+                        = val

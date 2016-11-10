@@ -1,0 +1,57 @@
+//
+   Created by danilaeremin on 10.01.16.
+
+html(lang='ru')
+   head
+      style(type='text/css').
+         @charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-animate){display:none !important;}ng\:form{display:block;}
+      meta(charset='utf-8')
+      meta(http-equiv='X-UA-Compatible', content='IE=edge')
+      meta(name='viewport', content='width=device-width, initial-scale=1')
+      title Управление квестами
+      // Bootstrap core CSS
+      link(rel='stylesheet', href='assets/css/bootstrap/bootstrap.css')
+      // Fonts
+      link(href='http://fonts.googleapis.com/css?family=Raleway:400,500,600,700,300', rel='stylesheet', type='text/css')
+      // Base Styling
+      link(rel='stylesheet', href='assets/css/app/app.v1.css')
+   body
+      div.container
+         .row
+            .col-lg-4.col-lg-offset-4
+               h3.text-center Управление кестом
+               p.text-center Войдите для доступа
+               hr.clean
+               if loginFailed
+                  .alert.alert-danger.alert-dismissible(role='alert')
+                     button.close(type='button', data-dismiss='alert')
+                        span(aria-hidden='true') ×
+                        span.sr-only Close
+                     strong Ошибка!
+                     |  Неправильный логин или пароль.
+
+
+               form(role='form', action='auth', method='post')
+                  .form-group.input-group
+                     span.input-group-addon
+                        i.fa.fa-envelope
+                     input.form-control(type='text', name='login', placeholder='Логин')
+                  .form-group.input-group
+                     span.input-group-addon
+                        i.fa.fa-key
+                     input.form-control(type='password', name='password', placeholder='Пароль')
+                  .form-group
+                     label.cr-styled
+                        input(type='checkbox', name='rememberMe', ng-model='todo.done')
+                        i.fa
+                     |                 Запомнить меня
+                  button.btn.btn-purple.btn-block(type='submit') Вход
+
+      // Content Block Ends Here (right box)
+      script(src='assets/js/jquery/jquery-1.9.1.min.js', type='text/javascript')
+      //// Bootstrap
+      script(src='assets/js/bootstrap/bootstrap.min.js')
+      //// Angular JS
+      script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.14/angular.min.js')
+      //// Custom JQuery
+      script(src='assets/js/app/custom.js', type='text/javascript')

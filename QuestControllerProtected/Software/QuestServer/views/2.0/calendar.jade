@@ -1,0 +1,42 @@
+//
+   Created by danilaeremin on 21.01.16.
+
+extends main
+
+block append content
+   hr
+   .page-header
+      h1 Календарь
+   .row
+      .col-md-12
+         .panel.panel-default
+            .panel-heading Календарь игр
+            .panel-body
+               .panel-heading.clean.clearfix.text-center
+                  .btn-group.pull-left
+                     button.btn.btn-default.btn-sm(data-calendar-nav='prev') << В прошлом
+                     button.btn.btn-sm.btn-default(data-calendar-nav='today') Сегодня
+                     button.btn.btn-sm.btn-default(data-calendar-nav='next') В будущем >>
+                  b.calender-title
+                  .btn-group.pull-right
+                     button.btn.btn-sm.btn-default(data-calendar-view='year') Год
+                     button.btn.btn-sm.btn-default.active(data-calendar-view='month') Месяц
+                     button.btn.btn-sm.btn-default(data-calendar-view='week') Неделя
+                     button.btn.btn-sm.btn-default(data-calendar-view='day') День
+               .panel-body
+                  #calendar
+block append script
+   if !room
+      script(type='text/javascript').
+         $("#left-menu-administration").toggleClass('active');
+         $("#left-menu-administration-calendar").toggleClass('active');
+   else
+      script(type='text/javascript').
+         $("#left-menu-quest").toggleClass('active');
+         $("#left-menu-quest-calendar").toggleClass('active');
+   // Calendar JS
+   script(src='/assets/js/plugins/calendar/language/ru-RU.js')
+   script(src='/assets/js/plugins/calendar/calendar.js')
+   // Calendar Conf
+   script(src='/javascripts/calendar-conf.js')
+

@@ -1,0 +1,56 @@
+//
+   Created by danilaeremin on 10.01.16.
+
+mixin camera (link)
+    p
+        object#vlc(classid='clsid:9BE31822-FDAD-461B-AD51-BE1D1C159921', width='640', height='360', events='True')
+            param(name='Src', value=link)
+            param(name='MRL', value='')
+            param(name='ShowDisplay', value='True')
+            param(name='AutoPlay', value='True')
+            param(name='Volume', value='50')
+            embed(pluginspage='http://www.videolan.org', type='application/x-vlc-plugin', version='VideoLAN.VLCPlugin.2', width='640', height='360', loop='false', text='Waiting for video', name='vlc', target=link)
+
+mixin cameraTab(name, index, active)
+    if active
+        li.active
+            a(data-toggle='tab', role='tab', href='#cam'+index)
+                = name
+    else
+        li
+            a(data-toggle='tab', role='tab', href='#cam'+index)
+                = name
+
+mixin cameraTabContent(link, index, active)
+    if active
+        .tab-pane.tabs-up.fade.panel.panel-default.active.in(id='cam' + index)
+            .panel-body
+                +camera(link)
+    else
+        .tab-pane.tabs-up.fade.panel.panel-default(id='cam' + index)
+            .panel-body
+                +camera(link)
+
+extends main
+
+block append content
+    hr
+    .page-header
+        h1
+            = room.name
+    .row
+        .col-md-12
+            if room.active.cams || user === 'admin'
+                ul#cameras.nav.nav-tabs(role='tablist')
+                    - for (var i = 0; i < room.cams.length; i++)
+                        +cameraTab(room.cams[i].desc,i,(i == 0))
+                #camerasContent.tab-content
+                    - for (var i = 0; i < room.cams.length; i++)
+                        +cameraTabContent(room.cams[i].link, i, (i == 0))
+block append script
+    script(type='text/javascript').
+        $("#left-menu-quest").toggleClass('active');
+        $("#left-menu-quest-cams").toggleClass('active');
+
+        var roomId = !{JSON.stringify(room.id)};
+

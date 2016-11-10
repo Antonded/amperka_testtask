@@ -1,0 +1,102 @@
+//
+   Created by danilaeremin on 10.01.16.
+
+include ../IO
+
+extends main
+
+block append content
+    hr
+    .page-header
+        h1
+            = room.name
+    .row
+        .col-md-12
+            ul#nodes.nav.nav-tabs(role='tablist')
+                - var activeTab = 0;
+                - for (var i = 0; i < room.nodes.length; i++)
+                    - if (room.nodes[i].output.length == 0)
+                        - continue
+                    - var active = "active";
+                    - if (activeTab > 0) active = "";
+                    - activeTab ++
+                    li(class=active)
+                        a(data-toggle='tab', role='tab', href='#node'+room.nodes[i].id)
+                            small
+                                = room.nodes[i].description
+            #nodesContent.tab-content
+                - var activeTab = 0;
+                - for (var i = 0; i < room.nodes.length; i++)
+                    - if (room.nodes[i].output.length == 0)
+                        - continue
+                    - var active = "active in";
+                    - if (activeTab > 0) active = "";
+                    - activeTab ++
+                    .tab-pane.tabs-up.fade.panel.panel-default(id='node'+room.nodes[i].id, class=active)
+                        .panel-body
+                            table.table.no-margn
+                                tbody
+                                    - for (var j = 0; j < room.nodes[i].output.length; j++)
+                                        - var output = room.nodes[i].output[j];
+                                        tr
+                                            td
+                                                small
+                                                    = room.nodes[i].output[j].description
+                                            td(align="right")
+                                                if lib.output[output.type].UI == 'audiobox'
+                                                    +combobox(room.nodes[i].id,output.id, trackList, trackList, output.state, "setNodeOutputFromDOM")
+                                                else if lib.output[output.type].UI == 'combobox'
+                                                    +combobox(room.nodes[i].id,output.id, output.visible, output.states, output.state, "setNodeOutputFromDOM")
+                                                else if lib.output[output.type].UI == 'on-off' || lib.output[output.type].UI == 'states'
+                                                    +toolbar(room.nodes[i].id,output.id,lib.output[output.type].visible,lib.output[output.type].states,output.state,"setNodeOutputFromDOM")
+                                                else if lib.output[output.type].UI == 'customStates'
+                                                    +toolbar(room.nodes[i].id,output.id,output.visible,output.states,output.state,"setNodeOutputFromDOM")
+                                                else if lib.output[output.type].UI == 'slider'
+                                                    +slider(room.nodes[i].id,output.id, output.min, output.max, output.state, "setNodeOutput")
+
+block append script
+    script(type='text/javascript').
+        $('#left-menu-quest').addClass('active');
+        $('#left-menu-quest-zones').addClass('active');
+
+        var roomId = !{JSON.stringify(room.id)};
+        var UIlib = !{JSON.stringify(lib)};
+
+        var setNodeOutput = function (nodeId, outputId, state) {
+            socket.emit('output changed', "{\"room\":\"" + roomId + "\", \"node\": \"" + nodeId + "\",\"output\":\"" + outputId + "\", \"state\":\"" + state + "\"}");
+        };
+
+        var setNodeOutputFromDOM = function (element) {
+            var nodeId = $(element).attr('node');
+            var IOId = $(element).attr('IO');
+            var state = $(element).attr('value');
+
+            setNodeOutput(nodeId, IOId, state);
+        };
+
+        var setToolbar = function (nodeId, IOId, state) {
+            $('[node=\''+nodeId+'\'][IO=\''+IOId+'\']').each(function () {
+                $(this).removeClass("btn-info");
+                $(this).addClass("btn-default");
+            });
+            $('[node=\''+nodeId+'\'][IO=\''+IOId+'\'][value=\''+state+'\']').toggleClass("btn-default btn-info");
+        };
+
+        socket.on('output changed', function(msg){
+            if (msg.room == roomId) {
+                var nodeId = msg.node.id;
+                var outputId = msg.output.id;
+                var state = msg.output.state;
+
+                switch (UIlib.output[msg.output.type].UI) {
+                    case 'on-off' :
+                        setToolbar(nodeId,outputId,state);
+                        break;
+
+                    case 'states' :
+                        setToolbar(nodeId, outputId, state);
+                        break;
+
+                }
+            }
+        });

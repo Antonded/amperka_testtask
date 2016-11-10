@@ -1,0 +1,319 @@
+//
+   Created by danilaeremin on 13.01.16.
+
+include ../IO
+
+extends main
+
+block append content
+    hr
+    .page-header
+        h1 Управление
+        ul.list-unstyled.list-inline.showcase-btn
+            if !firmwareEnabled
+                li
+                    .btn-group
+                        button.btn.btn-info(type='button', id='startUpdate', onclick="startFirmwareServer();") Запустить сервер обновления
+            else
+                li
+                    .btn-group
+                        button.btn.btn-danger(type='button', id='stopUpdate', onclick="stopFirmwareServer();") Остановить сервер обновления
+    .row
+        .col-md-12
+            ul#nodes.nav.nav-tabs(role='tablist')
+                - for (var i = 0; i < room.nodes.length; i++)
+                    - var active = "active";
+                    - if (i > 0) active = "";
+                    li(class=active)
+                        a(data-toggle='tab', role='tab', href='#node'+room.nodes[i].id)
+                            small
+                                = room.nodes[i].description
+                                span.badge.bg-success(style="background-color:#70ba63;margin-left:10px")
+                                    span(id='uptime'+room.nodes[i].id)
+                                        if room.nodes[i].uptime
+                                            = Math.floor(Number(room.nodes[i].uptime)/1000)
+                                        else
+                                            = '0'
+                                    = ' s'
+            #nodesContent.tab-content
+                - for (var i = 0; i < room.nodes.length; i++)
+                    - var active = "active in";
+                    - if (i > 0) active = "";
+                        .tab-pane.tabs-up.fade.panel.panel-default(id='node'+room.nodes[i].id, class=active)
+                            .panel-body
+                                ul.list-unstyled.list-inline.showcase-btn
+                                    li
+                                        .btn-group
+                                            button.btn.btn-danger(type='button', id='reboot', data-toggle='modal', data-target='#rebootModal'+room.nodes[i].id) Перезагрузить контроллер
+                                table.table.no-margn
+                                    tbody
+                                        - for (var j = 0; j < room.nodes[i].sensors.length; j++)
+                                            - var sensor = room.nodes[i].sensors[j];
+                                            tr
+                                                td
+                                                    small
+                                                        = sensor.description
+                                                td(align="right")
+                                                    if lib.sensors[sensor.type].UI == 'on-off' || lib.sensors[sensor.type].UI == 'states'
+                                                        .btn-toolbar.showcase-btn.pull-right(role='toolbar')
+                                                            .btn-group.btn-group-sm
+                                                                - for (var l = 0; l < lib.sensors[sensor.type].visible.length; l++)
+                                                                    if sensor.state === lib.sensors[sensor.type].states[l]
+                                                                        button.btn.btn-info.btn-sm(type='button', value=lib.sensors[sensor.type].states[l], id=room.nodes[i].id + 'toolbar' + sensor.id+l, onclick="setToolbarNodeSensor(\""+room.nodes[i].id+"\",\""+sensor.id+"\","+l+")")
+                                                                            = lib.sensors[sensor.type].visible[l]
+                                                                    else
+                                                                        button.btn.btn-default.btn-sm(type='button', value=lib.sensors[sensor.type].states[l], id=room.nodes[i].id + 'toolbar' + sensor.id+l, onclick="setToolbarNodeSensor(\""+room.nodes[i].id+"\",\""+sensor.id+"\","+l+")")
+                                                                            = lib.sensors[sensor.type].visible[l]
+                                                    else if lib.sensors[sensor.type].UI == 'customStates'
+                                                        //
+                                                    else if lib.sensors[sensor.type].UI == 'slider'
+                                                        div(style="width:250px;", align="left")
+                                                            input.slider(type='text', data-slider-min='0', data-slider-max='20', data-slider-step='1', data-slider-value='5', style="width:200px", id=room.nodes[i].id + 'slider' + sensor.id)
+                                                            span(style="width:50px") &nbsp;&nbsp;&nbsp;&nbsp;
+                                                                span(id=room.nodes[i].id + 'slider' + sensor.id+'SliderVal')
+                                                    else if lib.sensors[sensor.type].UI == 'textfield'
+                                                        .pull-right(id=room.nodes[i].id + 'textfield' + sensor.id)
+                                                            sensor.state
+    hr
+    .page-header
+        h1 Сценарий
+    .row
+        .col-md-12
+            ul#script.nav.nav-tabs(role='tablist')
+                li.active
+                    a(data-toggle='tab', role='tab', href='#base') Основные шаги
+                li
+                    a(data-toggle='tab', role='tab', href='#action') Действия
+                li
+                    a(data-toggle='tab', role='tab', href='#help') Подсказки
+            #scriptContent.tab-content
+                .tab-pane.tabs-up.fade.panel.panel-default.active.in(id='base')
+                    .panel-body
+                        table.table.no-margn
+                            thead
+                                tr
+                                    th #
+                                    th Шаг
+                                    th
+                                        table.table.no-margn
+                                            thead
+                                                tr
+                                                    th(width="50px") #
+                                                    th Вывод
+                                                    th(width="100px") Задержка
+
+                            tbody
+                                - for (var i = 0; i < script.events.length; i++)
+                                    - if (script.events[i].type === 'action') continue
+                                    - else if (script.events[i].type === 'help') continue
+                                    - else
+                                        tr
+                                            td
+                                                = script.events[i].id
+                                            td
+                                                = script.events[i].description
+                                            td
+                                                table.table.no-margn
+                                                    - for (var j = 0; j < script.output.length; j++)
+                                                        - if (script.events[i].output.indexOf(script.output[j].id) >= 0)
+                                                            tr
+                                                                td(width="50px")
+                                                                    = script.output[j].id
+                                                                td
+                                                                    = script.output[j].description
+                                                                td(width="100px")
+                                                                    = script.output[j].timeout
+
+                .tab-pane.tabs-up.fade.panel.panel-default(id='action')
+                    .panel-body
+                        table.table.no-margn
+                            thead
+                                tr
+                                    th #
+                                    th Шаг
+                                    th
+                                        table.table.no-margn
+                                            thead
+                                                tr
+                                                    th(width="50px") #
+                                                    th Вывод
+                                                    th(width="100px") Задержка
+                            tbody
+                                - for (var i = 0; i < script.events.length; i++)
+                                    - if (script.events[i].type === 'action')
+                                        tr
+                                            td
+                                                = script.events[i].id
+                                            td
+                                                = script.events[i].description
+                                            td
+                                                table.table.no-margn
+                                                    - for (var j = 0; j < script.output.length; j++)
+                                                        - if (script.events[i].output.indexOf(script.output[j].id) >= 0)
+                                                            tr
+                                                                td(width="50px")
+                                                                    = script.output[j].id
+                                                                td
+                                                                    = script.output[j].description
+                                                                td(width="100px")
+                                                                    = script.output[j].timeout
+                .tab-pane.tabs-up.fade.panel.panel-default(id='help')
+                    .panel-body
+                        table.table.no-margn
+                            thead
+                                tr
+                                    th #
+                                    th Шаг
+                                    th
+                                        table.table.no-margn
+                                            thead
+                                                tr
+                                                    th(width="50px") #
+                                                    th Вывод
+                                                    th(width="100px") Задержка
+                            tbody
+                                - for (var i = 0; i < script.events.length; i++)
+                                    - if (script.events[i].type === 'help')
+                                        tr
+                                            td
+                                                = script.events[i].id
+                                            td
+                                                = script.events[i].description
+                                            td
+                                                table.table.no-margn
+                                                    - for (var j = 0; j < script.output.length; j++)
+                                                        - if (script.events[i].output.indexOf(script.output[j].id) >= 0)
+                                                            tr
+                                                                td(width="50px")
+                                                                    = script.output[j].id
+                                                                td
+                                                                    = script.output[j].description
+                                                                td(width="100px")
+                                                                    = script.output[j].timeout
+
+
+
+
+    - for (var i = 0; i < room.nodes.length; i++)
+        .modal.fade(tabindex='-1', role='dialog', aria-labelledby='rebootModal', aria-hidden='true', id="rebootModal" + room.nodes[i].id)
+            .modal-dialog
+                .modal-content
+                    .modal-header
+                        button.close(type='button', data-dismiss='modal')
+                            span(aria-hidden='true') ×
+                            span.sr-only Close
+                        h4.modal-title(id="rebootModalLabel" + room.nodes[i].id)
+                            = "Перезагрузка контроллера " + room.nodes[i].description
+                    .modal-body
+                        p
+                            = "Вы действительно хотите перезагрузить контроллер " + room.nodes[i].description
+                    .modal-footer
+                        button.btn.btn-default(type='button', data-dismiss='modal') Отменить!
+                        button.btn.btn-primary(type='button', data-dismiss='modal', onclick="rebootNode(\""+room.nodes[i].id+"\");") Перезагрузить!
+block append script
+    script(src='/javascripts/bootstrap-slider.js')
+    script(type='text/javascript').
+        $("#left-menu-quest").toggleClass('active');
+        $("#left-menu-quest-administration").toggleClass('active');
+
+        var roomId = !{JSON.stringify(room.id)};
+        var UIlib = !{JSON.stringify(lib)};
+
+        var makeSlider = function (sliderId) {
+            var slider = $("#" + sliderId);
+            slider.slider();
+            slider.on("slide", function (slideEvt) {
+                var slederAttr = sliderId.split("slider");
+                setNodeSensor(slederAttr[0],slederAttr[1],slideEvt.value);
+                $("#" + sliderId + "SliderVal").text(slideEvt.value);
+            });
+        };
+
+        $( ".slider" ).each(function () {
+            makeSlider($(this).attr('id'));
+        });
+
+        var rebootNode = function (nodeId) {
+            socket.emit('reset node', "{\"room\":\"" + roomId + "\", \"node\": \"" + nodeId + "\"}");
+        };
+
+        var startFirmwareServer = function () {
+            $.ajax( {method: "POST",url:"/quests/"+roomId+"/firmware/start"} )
+                    .done(function() {
+                        location.reload();
+                    });
+        };
+
+        var stopFirmwareServer = function () {
+            $.ajax( {method: "POST",url:"/quests/"+roomId+"/firmware/stop"} )
+                    .done(function() {
+                        location.reload();
+                    });
+        };
+
+        var setToolbarNodeSensor = function (nodeId, sensorId, clicked) {
+            var state = $("#"+nodeId+"toolbar"+sensorId+clicked).val();
+            setNodeSensor(nodeId, sensorId, state);
+        };
+
+        var setNodeSensor = function (nodeId, sensorId,state) {
+            socket.emit('input changed', "{\"room\":\"" + roomId + "\", \"node\": \"" + nodeId + "\",\"sensor\":\"" + sensorId + "\", \"state\":\"" + state + "\"}");
+        };
+
+        socket.on('uptime', function(msg){
+            if (msg.room == roomId) {
+                $("#uptime"+msg.nodeId).text(Math.floor(Number(msg.uptime)/1000));
+            }
+        });
+
+        socket.on('input changed', function(msg){
+            if (msg.room == roomId) {
+                var nodeId = msg.node.id;
+                var sensorId = msg.sensor.id;
+                var state = msg.sensor.state;
+
+                switch (UIlib.sensors[msg.sensor.type].UI) {
+                    case 'on-off' : {
+                        for (var i = 0; i < 2; i++) {
+                            var obj = $("#"+nodeId+"toolbar"+sensorId+i);
+                            if (obj.val() !== state ) {
+                                obj.removeClass("btn-info");
+                                obj.addClass("btn-default");
+                            } else {
+                                obj.removeClass("btn-default");
+                                obj.addClass("btn-info");
+                            }
+
+                        }
+
+                        break;
+                    }
+
+                    case 'states' : {
+                        for (var i = 0; i < UIlib.sensors[msg.sensor.type].states.length; i++) {
+                            var obj = $("#"+nodeId+"toolbar"+sensorId+i);
+                            if (obj.val() !== state ) {
+                                obj.removeClass("btn-info");
+                                obj.addClass("btn-default");
+                            } else {
+                                obj.removeClass("btn-default");
+                                obj.addClass("btn-info");
+                            }
+                        }
+
+                        break;
+                    }
+
+                    case 'slider' : {
+                        $("#" + nodeId+"slider"+sensorId + "SliderVal").text(state);
+                        break;
+                    }
+
+                    case 'textfield' : {
+                        $("#"+nodeId+"textfield"+sensorId).text(state);
+
+                        break;
+                    }
+                }
+            }
+        });

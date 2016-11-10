@@ -1,0 +1,21 @@
+{
+  "name": "QuestServer",
+  "version": "2.3.2",
+  "homepage": "https://github.com/Antonded/QuestController",
+  "authors": [
+    "Anton Dedkov <antonded@gmail.com>"
+  ],
+  "license": "Shareware",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.5",
+    "jquery": "~2.1.4"
+  }
+}

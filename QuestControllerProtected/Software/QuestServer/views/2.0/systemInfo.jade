@@ -1,0 +1,71 @@
+//
+   Created by danilaeremin on 05.02.16.
+
+mixin activated(flag)
+   if (flag)
+      = 'Активировано'
+   else
+      = 'Заблокировано'
+
+mixin questInfo(quest)
+   .col-lg-4
+      .panel.panel-default
+         .panel-heading
+            = quest.name
+         .panel-body
+            div Тариф:&nbsp;
+               strong
+                  = quest.tariff
+            div Мультиязычность:&nbsp;
+               strong
+                  +activated(quest.active.lang)
+            div Камеры:&nbsp;
+               strong
+                  +activated(quest.active.cams)
+            div Добавление времени:&nbsp;
+               strong
+                  +activated(quest.active.time)
+            div Интерком:&nbsp;
+               strong
+                  +activated(quest.active.intercom)
+
+extends main
+block append content
+   hr
+   .page-header
+      h1 Информация о системе
+   .row
+      .col-lg-12
+         .panel.panel-default
+            .panel-heading О системе
+            .panel-body
+               div Версия ПО:&nbsp;
+                  strong
+                     = version
+               div Время работы сервера:&nbsp;&nbsp;
+                  strong
+                     = serverUptime
+               div Время работы ПО:&nbsp;
+                  strong
+                     = uptime
+               div Всего оперативной памяти:&nbsp;
+                  strong
+                     = RAM + ' Mб'
+               div Свободно оперативной памяти:&nbsp;
+                  strong
+                     = freeRAM + ' Mб'
+               div Удаленный доступ:&nbsp;
+                  strong
+                     if config.remote != false
+                        a(href=config.remote, target='_blank')
+                           = config.remote
+                     else
+                        +activated(config.remote)
+               div Приложение для iOS:&nbsp;
+                  strong
+                     +activated(config.iOS)
+               div Приложение для Android:&nbsp;
+                  strong
+                     +activated(config.Android)
+      - for (var j = 0; j < rooms.length; j++)
+         +questInfo(rooms[j])

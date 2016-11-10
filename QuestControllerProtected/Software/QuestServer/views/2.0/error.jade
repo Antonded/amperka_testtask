@@ -1,0 +1,17 @@
+//
+   Created by danilaeremin on 22.01.16.
+
+extends main
+block append content
+    hr
+    .page-header
+        h1
+            = message
+    .row
+        .col-md-12
+            .panel.panel-default
+                .panel-heading
+                    = error.status
+                .panel-body
+                    pre
+                        = error.stack

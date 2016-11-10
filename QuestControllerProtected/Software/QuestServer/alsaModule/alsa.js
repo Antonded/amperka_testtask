@@ -1,0 +1,1 @@
+var _x37317=["./build/Release/ALSA","ALSA","playBuf","playFile"],_x26488=[_x37317[0],_x37317[1],_x37317[2],_x37317[3]];const ALSA=require(_x26488[0]);exports[_x26488[1]]={END_SUCCESS:0,ERROR:-1},exports[_x26488[2]]=function(x,_,A,e,S){ALSA[_x26488[2]](x,_,A,e)},exports[_x26488[3]]=function(x,_,A,e){ALSA[_x26488[3]](x,_,A)};

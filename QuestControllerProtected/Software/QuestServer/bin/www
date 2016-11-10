@@ -1,0 +1,17 @@
+#!/usr/bin/env node
+'use strict';
+
+var log = require('../libs/log')(module);
+var app = require('../app');
+var config = require('../libs/config');
+var http  = require('http');
+
+var httpServer = http.createServer(app);
+
+require('../socketio')(require('socket.io')(httpServer));
+
+httpServer.listen(app.get('env') === 'development' ? config.get('devel-port') :
+                                                     config.get('production-port'), function () {
+
+    log.info('Quest server listening on port ' + httpServer.address().port);
+});

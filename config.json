@@ -1,0 +1,19 @@
+{
+	"id" : "AmperkaDemo",
+	"name" : "Special for Amperka",
+
+	"linkName" : "AmperkaDemo",
+	"link" : "http://localhost/",
+
+	"quests" : {
+		"test" : "quests/test"
+	},
+
+	"login" : "user",
+	"password" : "user",
+
+	"iOS" : true,
+	"Android" : true,
+
+	"remote" : "http://localhost:8841/"
+}

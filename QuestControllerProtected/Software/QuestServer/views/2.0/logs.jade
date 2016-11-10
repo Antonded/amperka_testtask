@@ -1,0 +1,46 @@
+//
+   Created by danilaeremin on 12.01.16.
+
+extends main
+
+block append content
+    hr
+    .page-header
+        h1 Логи
+    .row
+        .col-md-12
+            .panel.panel-default
+                .panel-heading
+                    - var end = Number(start)+Number(length)-1
+                    = 'С ' + start + ' по ' + end
+                .panel-body
+                    ul.list-unstyled.list-inline.showcase-btn
+                        li
+                            .btn-group
+                                button.btn.btn-success(type='button', id='top', onclick="showLog(1,"+length+")") В начало
+                        li
+                            .btn-group
+                                if (Number(start)-Number(length)) < 1
+                                    button.btn.btn-success(type='button', id='prev', onclick="showLog("+(Number(start)-Number(length))+","+length+")", disabled="disabled") Предыдущие
+                                else
+                                    button.btn.btn-success(type='button', id='prev', onclick="showLog("+(Number(start)-Number(length))+","+length+")") Предыдущие
+                        li
+                            .btn-group
+                                button.btn.btn-success(type='button', id='next', onclick="showLog(" + (Number(start) + Number(length)) + ","+length+")") Следующие
+                    table.table.no-margn
+                        - for (var l = 0; l < logs.length; l++)
+                            tr
+                                td
+                                    = logs[l].level
+                                td
+                                    = logs[l].message
+                                td
+                                    = logs[l].timestamp
+block append script
+    script(type='text/javascript').
+        $('#left-menu-administration').addClass('active');
+        $('#left-menu-administration-logs').addClass('active');
+
+        var showLog = function (start, len) {
+            location.href = "/logs/"+start+"/"+len;
+        };

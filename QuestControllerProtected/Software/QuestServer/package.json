@@ -1,0 +1,32 @@
+{
+  "name": "QuestServer",
+  "version": "2.5.5",
+  "private": true,
+  "scripts": {
+    "start": "sudo NODE_ENV=production ./node_modules/forever/bin/forever start bin/www",
+    "stop": "sudo ./node_modules/forever/bin/forever stop bin/www",
+    "test": "sudo ./node_modules/forever/bin/forever list"
+  },
+  "dependencies": {
+    "body-parser": "1.13.3",
+    "code-protect": "1.0.3",
+    "cookie-parser": "1.3.5",
+    "debug": "2.2.0",
+    "express": "4.13.3",
+    "express-session": "1.12.1",
+    "forever": "0.13.0",
+    "jade": "1.11.0",
+    "jquery-file-upload-middleware": "0.1.7",
+    "mongo-express": "0.30.59",
+    "mongoose": "4.4.4",
+    "morgan": "1.6.1",
+    "nconf": "0.7.2",
+    "serve-favicon": "2.3.0",
+    "socket.io": "1.3.6",
+    "tftp": "0.1.2",
+    "wav-encoder": "0.3.0",
+    "winston": "1.0.1",
+    "winston-logs-display": "0.1.1",
+    "winston-mongodb": "1.3.0"
+  }
+}

@@ -1,0 +1,35 @@
+//
+   Created by danilaeremin on 25.02.16.
+
+header.top-head.container-fluid
+   button.navbar-toggle.pull-left(type='button')
+      span.sr-only Toggle navigation
+      span.icon-bar
+      span.icon-bar
+      span.icon-bar
+   nav.navbar-default.hidden-xs(role='navigation')
+      ul.nav.navbar-nav
+         li
+            a(href=link.URL, target='_blank')
+               = link.name
+         li.dropdown
+            a.dropdown-toggle(data-toggle='dropdown', href='#')
+               | Квесты
+               span.caret
+            ul.dropdown-menu(role='menu')
+               - for (var j = 0; j < rooms.length; j++)
+                  li
+                     a(href='/quests/'+rooms[j].id)
+                        = rooms[j].name
+         li
+            a(href='/systemInfo') О системе
+   ul.nav-toolbar
+      //li.dropdown
+          a(href='#', data-toggle='dropdown')
+              i.fa.fa-bell-o(style='padding-top:4px;')
+              span.badge#notificationsBadge(style="display:none;")
+          .dropdown-menu.arrow.pull-right.md.panel.panel-default.arrow-top-right.notifications
+              .panel-heading
+                  | События
+              .list-group(id='notifications')
+// Header Ends

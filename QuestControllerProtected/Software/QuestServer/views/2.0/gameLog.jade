@@ -1,0 +1,76 @@
+//
+   Created by danilaeremin on 21.01.16.
+
+mixin event(startDate, event, css_class)
+    li.clearfix
+        time.tl-time
+            h3(class='text-'+css_class)
+                - var dur = Math.floor((event.date - startDate)/1000)
+
+                - var min = Math.floor(dur/60)
+                - var sec = dur - 60 * min
+
+                - if (min < 10)
+                    - min = '0' + min
+                - if (sec < 10)
+                    - sec = '0' + sec
+                = min + ':' + sec
+            p
+                - var day = event.date.getDate();
+                - if (day < 10)
+                    - day = '0'+day;
+                - var month = event.date.getMonth()+1;
+                - if (month < 10)
+                    - month = '0'+month;
+                - var year = event.date.getFullYear();
+
+                - var h = event.date.getHours();
+                - if (h < 10)
+                    - h = '0'+h;
+                - var min = event.date.getMinutes();
+                - if (min < 10)
+                    - min = '0'+min;
+                - var sec = event.date.getSeconds();
+                - if (sec < 10)
+                    - sec = '0'+sec;
+                = day+'/'+month+'/'+year+' ' +h+ ':'+min+ ':'+sec
+        i.fa.fa-comments-o.tl-icon.text-white(class='bg-'+css_class)
+        .tl-content
+            - if (css_class == 'purple') css_class = 'primary'
+            .panel(class='panel-'+css_class)
+                .panel-body
+                    != event.msg
+
+extends main
+
+block append content
+    hr
+    .page-header
+        ul.list-unstyled.list-inline.showcase-btn
+            li
+                .btn-group
+                    button.btn.btn-info(type='button', onclick="history.go(-1);") Назад к календарю
+    .row
+        .col-md-12
+             .panel.panel-default
+                .panel-heading Лог игры
+                .panel-body
+                    ul.timeline.list-unstyled
+                        - if (stat.stopTime - stat.startDate > 1000)
+                            +event(stat.startDate, {date: stat.stopTime, msg:'Квест окончен'}, 'purple')
+                        - for (var i = stat.gameEvents.length-1; i >= 0; i--)
+                            if stat.gameEvents[i].eventType == 'changeOutput'
+                                +event(stat.startDate, stat.gameEvents[i], 'success')
+                            else if stat.gameEvents[i].eventType == 'changeSensor'
+                                +event(stat.startDate, stat.gameEvents[i], 'info')
+                            else if stat.gameEvents[i].eventType == 'scriptEvent'
+                                +event(stat.startDate, stat.gameEvents[i], 'warning')
+                        +event(stat.startDate, {date: stat.startDate, msg:'Запустили квест'}, 'purple')
+
+
+
+
+block append script.
+    script(type='text/javascript').
+        $('#left-menu-quest').addClass('active');
+        $('#left-menu-quest-calendar').addClass('active');

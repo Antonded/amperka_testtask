@@ -1,0 +1,395 @@
+{
+  "id": "test",
+  "name": "Тестовый стенд",
+  "description": "Тестовая плата",
+  "port" : 8840,
+  "lang" : {
+    "Русский" : "ru"
+  },
+  "tariff" : "VIP",
+  "active" : {
+    "lang" : true,
+    "cams" : true,
+    "time" : true,
+    "intercom" : false
+  },
+  "cams" : [
+    {
+    }
+  ],
+  "nodes":
+  [
+    {
+      "id" : "Python",
+      "ip" : "10.0.0.102",
+      "port" : 8840,
+      "description": "Тест питоновской либы",
+      "sensors" : [
+        {
+          "id" : "Test",
+          "description": "Тестовый присылаемые датчик (текстовое значение)",
+          "type" : "Rfid"
+        }
+      ],
+      "output" : [
+      {
+          "id" : "Test",
+          "description": "Тестовый вывод (текстовое значение)",
+          "type" : "Audio"
+        }
+      ]
+    },
+    {
+      "id" : "VideoServer",
+      "ip" : "127.0.0.1",
+      "port" : 9840,
+      "description": "Test Python Video Server",
+      "sensors" : [
+
+      ],
+      "output" : [
+      {
+          "id" : "Video1",
+          "description": "Тестовый вывод (текстовое значение)",
+          "type" : "Audio"
+        }
+      ]
+    },
+    {
+      "id" : "T1",
+      "ip" : "10.0.0.101",
+      "firmwareId" : "t01",
+      "port" : 8840,
+      "description": "Тестовая плата",
+      "sensors" : [
+        {
+          "id" : "IR",
+          "description": "IR",
+          "type" : "Rfid"
+        },
+        {
+          "id" : "Rfid",
+          "description": "RFID",
+          "type" : "Rfid"
+        },
+        {
+          "id" : "Temperature",
+          "description": "ДатчикТемпературы",
+          "type" : "Rfid"
+        },
+        {
+          "id" : "HX711",
+          "description": "Scale",
+          "type" : "Rfid"
+        },
+        {
+          "id" : "Keypad",
+          "description": "КодоваяПанель",
+          "type" : "Rfid"
+        },
+        {
+          "id" : "Freq",
+          "description": "Датчик частоты",
+          "type" : "Rfid"
+        },
+        {
+          "id" : "Inductive",
+          "description": "Индуктивный датчик",
+          "type" : "Reed",
+          "state" : ""
+        }
+      ],
+      "output" : [
+        {
+          "id" : "R1_1",
+          "description": "Блок 1 реле 1",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R1_2",
+          "description": "Блок 1 реле 2",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R1_3",
+          "description": "Блок 1 реле 3",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R1_4",
+          "description": "Блок 1 реле 4",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R1_5",
+          "description": "Блок 1 реле 5",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R1_6",
+          "description": "Блок 1 реле 6",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R1_7",
+          "description": "Блок 1 реле 7",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R1_8",
+          "description": "Блок 1 реле 8",
+          "type" : "Door",
+          "state" : "Off"
+        },
+
+
+
+        {
+          "id" : "R2_1",
+          "description": "Блок 2 реле 1",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R2_2",
+          "description": "Блок 2 реле 2",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R2_3",
+          "description": "Блок 2 реле 3",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R2_4",
+          "description": "Блок 2 реле 4",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R2_5",
+          "description": "Блок 2 реле 5",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R2_6",
+          "description": "Блок 2 реле 6",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R2_7",
+          "description": "Блок 2 реле 7",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R2_8",
+          "description": "Блок 2 реле 8",
+          "type" : "Door",
+          "state" : "Off"
+        },
+
+
+        {
+          "id" : "R3_1",
+          "description": "Блок 3 реле 1",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R3_2",
+          "description": "Блок 3 реле 2",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R3_3",
+          "description": "Блок 3 реле 3",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R3_4",
+          "description": "Блок 3 реле 4",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R3_5",
+          "description": "Блок 3 реле 5",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R3_6",
+          "description": "Блок 3 реле 6",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R3_7",
+          "description": "Блок 3 реле 7",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R3_8",
+          "description": "Блок 3 реле 8",
+          "type" : "Door",
+          "state" : "Off"
+        },
+
+
+        {
+          "id" : "R4_1",
+          "description": "Блок 4 реле 1",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R4_2",
+          "description": "Блок 4 реле 2",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R4_3",
+          "description": "Блок 4 реле 3",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R4_4",
+          "description": "Блок 4 реле 4",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R4_5",
+          "description": "Блок 4 реле 5",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R4_6",
+          "description": "Блок 4 реле 6",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R4_7",
+          "description": "Блок 4 реле 7",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R4_8",
+          "description": "Блок 4 реле 8",
+          "type" : "Door",
+          "state" : "Off"
+        },
+
+
+        {
+          "id" : "R5_1",
+          "description": "Блок 5 реле 1",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R5_2",
+          "description": "Блок 5 реле 2",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R5_3",
+          "description": "Блок 5 реле 3",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R5_4",
+          "description": "Блок 5 реле 4",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R5_5",
+          "description": "Блок 5 реле 5",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R5_6",
+          "description": "Блок 5 реле 6",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R5_7",
+          "description": "Блок 5 реле 7",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R5_8",
+          "description": "Блок 5 реле 8",
+          "type" : "Door",
+          "state" : "Off"
+        },
+
+
+        {
+          "id" : "R_2_1",
+          "description": "Блок на 2 реле 1",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R_2_2",
+          "description": "Блок на 2 реле 2",
+          "type" : "Door",
+          "state" : "Off"
+        },
+
+
+        {
+          "id" : "R_4_1",
+          "description": "Блок на 4 реле 1",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R_4_2",
+          "description": "Блок на 4 реле 2",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R_4_3",
+          "description": "Блок на 4 реле 3",
+          "type" : "Door",
+          "state" : "Off"
+        },
+        {
+          "id" : "R_4_4",
+          "description": "Блок на 4 реле 4",
+          "type" : "Door",
+          "state" : "Off"
+        }
+      ]
+    }
+  ]
+}

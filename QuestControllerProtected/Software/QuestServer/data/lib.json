@@ -1,0 +1,32 @@
+{
+  "sensors" :
+  {
+    "Custom" :          {"name" : "Custom", "states" : ["On", "Off"], "UI" : "on-off", "visible" : ["Вкл", "Выкл"]},
+    "Button" :          {"name" : "Button", "states" : ["Low", "High"], "UI" : "on-off", "visible" : ["Вкл", "Выкл"]},
+    "Reed" :            {"name" : "Reed", "states" : ["Low", "High"], "UI" : "on-off", "visible" : ["Вкл", "Выкл"]},
+    "VolumeSensor" :    {"name" : "VolumeSensor", "states" : ["Low", "High"], "UI" : "on-off", "visible" : ["Вкл", "Выкл"]},
+    "DistanceSensor" :  {"name" : "DistanceSensor", "states" : "Numbers", "UI" : "slider"},
+    "CurrentSensor" :   {"name" : "CurrentSensor", "states" : "Numbers", "UI" : "slider"},
+    "CapacitySensor" :  {"name" : "CapacitySensor", "states" : ["Less", "More"], "UI" : "on-off", "visible" : ["Меньше", "Больше"]},
+    "CapacitySensorRaw" :  {"name" : "CapacitySensorRaw", "states" : "Numbers", "UI" : "slider"},
+    "Group" :           {"name" : "Group", "states" : ["Passed", "Failed"], "UI" : "on-off", "visible" : ["Пройдено", "Завалено"]},
+    "Rfid" :  {"name" : "Rfid", "states" : "Text", "UI" : "textfield"}
+  },
+  "output" :
+  {
+    "Switch" : {"name" : "Switch", "states" : ["On", "Off"], "UI" : "on-off", "visible" : ["Вкл", "Выкл"]},
+    "MagneticLock" : {"name" : "MagneticLock", "states" : ["On", "Off"], "UI" : "on-off", "visible" : ["Вкл", "Выкл"]},
+    "MotorDoor" : {"name" : "MotorDoor", "states" : ["Opening", "Closing"], "UI" : "on-off", "visible" : ["Открыто", "Закрыто"]},
+    "Door" : {"name" : "Door", "states" : ["On", "Off"], "UI" : "on-off", "visible" : ["Открыто", "Закрыто"]},
+    "Guillotine" : {"name" : "Guillotine", "states" : ["OpeningOpening", "ClosingClosing"], "UI" : "on-off", "visible" : ["Открыть", "Закрыть"]},
+    "DoorInverse" : {"name" : "DoorInverse", "states" : ["On", "Off"], "UI" : "on-off", "visible" : ["Закрыто", "Открыто"]},
+    "Motor" :        {"name" : "Motor", "states" : ["On", "Off"], "UI" : "on-off", "visible" : ["Вкл", "Выкл"]},
+    "3Motor" :        {"name" : "Three-phase Motor", "states" : ["Forward", "Backward","Off"], "UI" : "states", "visible" : ["Вперёд", "Назад", "Выкл"]},
+    "Light" :        {"name" : "Light", "states" : ["On", "Off"], "UI" : "on-off", "visible" : ["Выкл", "Вкл"]},
+    "Activation" :   {"name" : "Activation", "states" : ["On", "Off"], "UI" : "on-off", "visible" : ["Вкл", "Выкл"]},
+    "Audio" :        {"name" : "Audio", "states" : "String", "UI" : "audiobox"},
+    "CustomStates" : {"name" : "CustomStates", "UI" : "customStates"},
+    "Pwm" : {"name" : "Pwm", "UI" : "slider"},
+    "Dmx" : {"name" : "Dmx", "UI" : "slider"}
+  }
+}

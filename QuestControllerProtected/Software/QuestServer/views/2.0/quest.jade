@@ -1,0 +1,140 @@
+//
+   Created by danilaeremin on 10.01.16.
+
+extends main
+
+block append content
+    hr
+    .page-header
+        h1
+            = room.name
+    .row
+        .col-md-12
+            .panel.panel-default
+                .panel-heading Управление квестом
+                .panel-body
+                    if !running || running === undefined
+                        ul.list-unstyled.list-inline.showcase-btn
+                            li
+                                .btn-group
+                                    - for(var l in room.lang) break
+                                    button.btn.btn-success(type='button', value=room.lang[l], id='startButton', onclick="startQuest();") Запустить квест
+                                    if room.active.lang
+                                        button.btn.btn-success.dropdown-toggle(type='button', data-toggle='dropdown') &nbsp;
+                                            span.caret
+                                            span.sr-only Toggle Dropdown
+                                        ul.dropdown-menu(role='menu')
+                                            - for (var l in room.lang)
+                                                li
+                                                    a(href='#', onclick='$("#startButton").val(\"'+room.lang[l]+'\");return false;')
+                                                        = l
+                    else
+                        ul.list-unstyled.list-inline.showcase-btn
+                            li
+                                .btn-group
+                                    button.btn.btn-danger(type='button', id='stopButton', onclick="stopQuest();") Остановить квест
+                            if room.active.time
+                                li
+                                    .btn-group
+                                        button.btn.btn-info(type='button', onclick="addTime(1);") Добавить минуту
+                                li
+                                    .btn-group
+                                        button.btn.btn-info(type='button', onclick="addTime(5);") Добавить 5 минут
+                                li
+                                    .btn-group
+                                        button.btn.btn-warning(type='button', onclick="addTime(10);") Добавить 10 минут
+                                li
+                                    .btn-group
+                                        button.btn.btn-warning(type='button', onclick="addTime(15);") Добавить 15 минут
+    .row
+        .col-md-6
+            .panel.panel-default
+                .panel-heading Основные шаги
+                .panel-body
+                    table.table.no-margn
+                        tbody
+                            - for (var i = 0; i < script.events.length; i++)
+                                - if (script.events[i].type === 'action')
+                                    - continue
+                                - else  if (script.events[i].type === 'help')
+                                    - continue
+                                - else
+                                    tr
+                                        td
+                                            = script.events[i].description
+                                        if script.events[i].status == 'ok'
+                                            td.text-success(align="right") Пройдено
+                                        else
+                                            td(id=room.id+'script'+script.events[i].id, align="right")
+                                                button.btn.btn-success.btn-sm.pull-right(type='button',id=room.id+'button'+script.events[i].id, onClick="scriptEvent('"+script.events[i].id+"');") Пропустить шаг
+            .panel.panel-default
+                .panel-heading Подсказки
+                .panel-body
+                    table.table.no-margn
+                        tbody
+                            - for (var i = 0; i < script.events.length; i++)
+                                - if (script.events[i].type === 'help')
+                                    tr
+                                        td
+                                            = script.events[i].description
+                                        td
+                                            button.btn.btn-success.btn-sm.pull-right(type='button',id=room.id+'help'+script.events[i].id, onClick="scriptEvent('"+script.events[i].id+"');") Дать подсказку
+        .col-md-6
+            .panel.panel-default
+                .panel-heading Действия
+                .panel-body
+                    table.table.no-margn
+                        tbody
+                            - for (var i = 0; i < script.events.length; i++)
+                                - if (script.events[i].type === 'action')
+                                    tr
+                                        td
+                                            = script.events[i].description
+                                        td
+                                            button.btn.btn-success.btn-sm.pull-right(type='button',id=room.id+'action'+script.events[i].id, onClick="scriptEvent('"+script.events[i].id+"');") Имитировать
+block append script
+    script(type='text/javascript').
+        $('#left-menu-quest').addClass('active');
+        $('#left-menu-quest-script').addClass('active');
+
+        var roomId = !{JSON.stringify(room.id)};
+
+        socket.on('quest end', function (msg) {
+            location.reload();
+        });
+
+        socket.on('script changed', function(msg){
+            if (msg.room == roomId && msg.scriptEvent.status == 'ok') {
+                var obj = $('#' + roomId + 'script' + msg.scriptEvent.id);
+                obj.text('Пройдено');
+                obj.toggleClass('text-success');
+            }
+        });
+
+        var scriptEvent = function (id) {
+            socket.emit('script changed', "{\"room\":\"" + roomId + "\", \"scriptId\": \"" + id + "\"}");
+        };
+
+        var startQuest = function () {
+            var lang = $("#startButton").val();
+
+            $.ajax( {method: "POST",url:"/quests/"+roomId+"/start/"+lang} )
+                .done(function() {
+                    location.reload();
+                })
+                .fail(function() {
+                    alert( "Не получилось начать квест, попробуйте еще раз" );
+                });
+        };
+
+        var stopQuest = function () {
+
+            $.ajax( {method: "POST",url:"/quests/"+roomId+"/stop"} )
+                    .done(function() {
+                        location.reload();
+                    });
+        };
+
+        var addTime = function (time) {
+            socket.emit('addTime', "{\"room\":\"" + roomId + "\", \"time\": " + time + "}");
+        };

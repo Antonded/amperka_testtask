@@ -1,0 +1,156 @@
+//
+   Created by danilaeremin on 17.01.16.
+
+extends main
+
+block append content
+    hr
+    .page-header
+        h1 Статистика
+    .row
+        .col-md-12
+            ul.list-unstyled.list-inline.showcase-btn
+                li
+                    .btn-group
+                        button.btn.btn-danger(type='button', id='clearStat', data-toggle='modal', data-target='#clearStatModal') Очистить статистику
+
+            ul#stats.nav.nav-tabs(role='tablist')
+                li.active
+                    a(data-toggle='tab', role='tab', href='#week') Неделя
+                li
+                    a(data-toggle='tab', role='tab', href='#monthDay') Месяц
+                li
+                    a(data-toggle='tab', role='tab', href='#month') Год
+            #statsContent.tab-content
+                .tab-pane.tabs-up.fade.panel.panel-default.active.in(id='week')
+                    .panel-body.text-center
+                        .panel-heading.clean Среднее количество игр по дням недели
+                        #weekPlot(style="min-height:400px;")
+                .tab-pane.tabs-up.fade.panel.panel-default(id='monthDay')
+                    .panel-body.text-center
+                        .panel-heading.clean Среднее количество игр по дням месяца
+                        #monthDayPlot(style="min-height:400px")
+                .tab-pane.tabs-up.fade.panel.panel-default(id='month')
+                    .panel-body.text-center
+                        .panel-heading.clean Среднее количество игр по месяцам
+                        #monthPlot(style="min-height:400px")
+    .modal.fade(tabindex='-1', role='dialog', aria-labelledby='clearStatModal', aria-hidden='true', id="clearStatModal")
+        .modal-dialog
+            .modal-content
+                .modal-header
+                    button.close(type='button', data-dismiss='modal')
+                        span(aria-hidden='true') ×
+                        span.sr-only Close
+                    h4.modal-title(id="clearStatLabel")
+                        = "Очистка статистики"
+                .modal-body
+                    p
+                        = "Вы действительно хотите очистить статистику"
+                .modal-footer
+                    button.btn.btn-default(type='button', data-dismiss='modal') Отменить!
+                    button.btn.btn-primary(type='button', data-dismiss='modal', onclick="clearStat();") Стереть!
+
+block append script
+    script(type='text/javascript').
+        $('#left-menu-administration').addClass('active');
+        $('#left-menu-administration-stats').addClass('active');
+
+        var statsObj = !{JSON.stringify(stats)};
+
+        var weekData = [
+            {day: 'Понедельник'},
+            {day: 'Вторник'},
+            {day: 'Среда'},
+            {day: 'Четверг'},
+            {day: 'Пятница'},
+            {day: 'Суббота'},
+            {day: 'Воскресенье'}
+        ];
+        var monthDayData = [];
+        for (var i = 0; i < 31; i++)
+            monthDayData[i] = {'day' : i+1};
+
+        var monthData = [
+            {day: 'Январь'},
+            {day: 'Февраль'},
+            {day: 'Март'},
+            {day: 'Апрель'},
+            {day: 'Май'},
+            {day: 'Июнь'},
+            {day: 'Июль'},
+            {day: 'Август'},
+            {day: 'Сентябрь'},
+            {day: 'Октябрь'},
+            {day: 'Ноябрь'},
+            {day: 'Декабрь'}
+        ];
+
+        var quests = [];
+        var questNames = [];
+
+        var maxGamesWeek = 0;
+        var maxGamesMonthDay = 0;
+        var maxGamesMonth = 0;
+
+        for (var quest in statsObj) {
+            quests.push(quest);
+            questNames.push(statsObj[quest].name);
+            var questStat = statsObj[quest];
+
+            for (var i = 0; i < 7; i++) {
+                weekData[i][quest] = questStat.week[i];
+                if (maxGamesWeek < questStat.week[i]) maxGamesWeek = questStat.week[i];
+            }
+
+            for (var i = 0; i < 31; i++) {
+                monthDayData[i][quest] = questStat.monthDay[i];
+                if (maxGamesMonthDay < questStat.monthDay[i]) maxGamesMonthDay = questStat.monthDay[i];
+            }
+
+            for (var i = 0; i < 12; i++) {
+                monthData[i][quest] = questStat.month[i];
+                if (maxGamesMonth < questStat.month[i]) maxGamesMonth = questStat.month[i];
+            }
+        }
+
+        maxGamesWeek = Math.max(maxGamesWeek,2);
+        maxGamesMonthDay = Math.max(maxGamesMonthDay, 2);
+        maxGamesMonth = Math.max(maxGamesMonth, 2);
+
+        var config = {
+                    xkey: 'day',
+                    ykeys: quests,
+                    ymin : 0,
+                    ymax : maxGamesWeek,
+                    labels: questNames,
+                    hideHover: 'auto',
+                    resize : true,
+                    gridIntegers: true
+                };
+
+        config.data = weekData;
+        config.element = 'weekPlot';
+        var charts = {};
+        charts['#week'] = Morris.Bar(config);
+
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            var target = $(e.target).attr("href");
+            if (!charts[target]) {
+                if (target == '#monthDay') {
+                    config.data = monthDayData;
+                    config.ymax = maxGamesMonthDay;
+                    config.element = 'monthDayPlot';
+                    charts[target] = Morris.Bar(config);
+                } else if (target == '#month') {
+                    config.data = monthData;
+                    config.ymax = maxGamesMonth;
+                    config.element = 'monthPlot';
+                    charts[target] = Morris.Bar(config);
+                }
+            }
+        });
+
+        var clearStat = function () {
+            socket.emit('clear stat', "{}");
+            location.reload();
+        };

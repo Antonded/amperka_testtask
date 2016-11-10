@@ -1,0 +1,107 @@
+html(lang='ru')
+    head
+        style(type='text/css').
+            @charset "UTF-8";
+            [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak, .ng-hide:not(.ng-animate) {
+                display: none !important;
+            }
+
+            ng\:form {
+                display: block;
+            }
+        meta(charset='utf-8')
+        meta(http-equiv='X-UA-Compatible', content='IE=edge')
+        meta(name='viewport', content='width=device-width, initial-scale=1')
+        title Управление квестами
+        link(rel='stylesheet', href='/stylesheets/bootstrap-slider.css')
+        link(rel='stylesheet', href='/assets/css/bootstrap/bootstrap.css')
+        link(rel='stylesheet', href='/assets/css/plugins/morris/morris.css')
+        link(rel='stylesheet', href='/assets/css/plugins/file-upload/jquery.fileupload.css')
+        link(rel='stylesheet', href='/assets/css/app/app.v1.css')
+        link(rel='stylesheet', href='/assets/css/plugins/calendar/calendar.css')
+        link(rel='stylesheet', href='/assets/css/app/timeline.css')
+
+        script(src='/assets/js/jquery/jquery-1.9.1.min.js')
+        script(src='/assets/js/plugins/morris/raphael.min.js')
+        script(src='/assets/js/plugins/morris/morris.min.js')
+        script(src='/assets/js/bootstrap/bootstrap.min.js')
+        script(src='/assets/js/angular/angular.min.js')
+        script(src='/assets/js/plugins/underscore/underscore-min.js')
+        script(src='/assets/js/plugins/nicescroll/jquery.nicescroll.min.js')
+        script(src='/assets/js/app/custom.js')
+        script(src='/socket.io/socket.io.js')
+        script(src='/javascripts/bootstrap-slider.js')
+    body
+        include ../leftMenu
+        section.content
+            include ../header
+            .warper.container-fluid
+                .page-header
+                    h1
+                        = name
+                        small &nbsp;&nbsp;Система управления квестами
+                .row
+                    - for (var i = 0; i < rooms.length; i++)
+                        .col-lg-3
+                            .panel.panel-default(id=rooms[i].id+'timePanel')
+                                .panel-heading.text-center
+                                    = rooms[i].name
+                                .panel-body.text-center
+                                    .text-muted
+                                        big(id=rooms[i].id + 'time') &nbsp;
+                                    .text-muted Длительность&nbsp;
+                                        big(id=rooms[i].id + 'duration') 60
+                                        | &nbsp;мин
+                block content
+            include ../footer
+
+        script(type='text/javascript').
+            var socket = io();
+
+            socket.on('quest time', function(msg){
+                if (msg.running) {
+                    $('#' + msg.room + 'timePanel').addClass('panel-success');
+                } else {
+                    $('#' + msg.room + 'timePanel').removeClass('panel-success');
+                }
+                if (msg.time) {
+                    $("#" + msg.room + "time").text(parseInt(msg.time / 60) + ' : ' + (msg.time - 60 * parseInt(msg.time / 60)));
+                } else {
+                    $("#" + msg.room + "time").text('Остановлен');
+                }
+            });
+
+            socket.on('quest duration', function(msg){
+                if (msg.duration)
+                    $("#"+msg.room+"duration").text(msg.duration);
+            });
+
+            var managerCalls = [];
+
+            var managerCall = function () {
+                for (var i = 0; i < managerCalls.length; i++) {
+                    $('#'+managerCalls[i]+'timePanel').toggleClass('panel-danger');
+                }
+            };
+
+            setInterval(managerCall, 500);
+
+            socket.on('manager call', function(msg) {
+                if (managerCalls.indexOf(msg.room) < 0)
+                    managerCalls.push (msg.room);
+
+                var stop = function () {
+                    managerCallStop(msg.room);
+                };
+
+                setTimeout(stop, 15000);
+            });
+
+            var managerCallStop = function (roomId) {
+                var index = managerCalls.indexOf(roomId);
+                if (index >= 0)
+                    managerCalls.splice (index,1);
+                $('#'+roomId+'timePanel').removeClass('panel-danger');
+            };
+        block script
+

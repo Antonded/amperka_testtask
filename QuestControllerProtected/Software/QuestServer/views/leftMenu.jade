@@ -1,0 +1,74 @@
+//
+   Created by danilaeremin on 25.02.16.
+
+aside.left-panel(tabindex='5003', style='overflow: hidden; outline: none;')
+   .user.text-center
+      - if (user === 'admin' || user == 'guest')
+         img.img-circle(src='/img/' + user + '.png', alt='userpic')
+      - else
+         img.img-circle(src='/img/manager.png', alt='userpic')
+      h4.user-name
+         if user == 'admin'
+            | Администратор
+         else if user == 'guest'
+            | Гость
+         else
+            | Менеджер
+   nav.navigation
+      ul.list-unstyled
+         li#left-menu-dashboard
+            a(href='/dashboard')
+               i.fa.fa-dashboard
+               span.nav-label Dashboard
+         li.has-submenu#left-menu-quests
+            a(href='#')
+               i.fa.fa-key
+               span.nav-label Квесты
+            ul.list-unstyled
+               - for (var j = 0; j < rooms.length; j++)
+                  li(id='left-menu-quests-'+rooms[j].id)
+                     a(href='/quests/'+rooms[j].id)
+                        = rooms[j].name
+         if room
+            li.has-submenu#left-menu-quest
+               a(href='#')
+                  i.fa.fa-gamepad
+                  span.nav-label Квест
+               ul.list-unstyled
+                  li#left-menu-quest-script
+                     a(href='/quests/'+room.id) Сценарий
+                  li#left-menu-quest-zones
+                     a(href='/quests/'+room.id+'/nodes') Зоны
+                  li#left-menu-quest-sensors
+                     a(href='/quests/'+room.id+ '/sensors') Датчики
+                  li#left-menu-quest-cams
+                     a(href='/quests/' + room.id + '/cams') Камеры
+                  li#left-menu-quest-calendar
+                     a(href='/quests/' + room.id + '/calendar') Календарь
+                  if user === 'admin'
+                     li#left-menu-quest-administration
+                        a(href='/quests/' + room.id + '/admin') Управление
+         if user === 'admin'
+            li.has-submenu#left-menu-administration
+               a(href='#')
+                  i.fa.fa-gears
+                  span.nav-label Администрирование
+               ul.list-unstyled
+                  li#left-menu-administration-calendar
+                     a(href='/calendar') Календарь игр
+                  li#left-menu-administration-stats
+                     a(href='/stats') Статистика
+                  li#left-menu-administration-firmware
+                     a(href='/firmware') Сервер прошивок
+                  li#left-menu-administration-logs
+                     a(href='/logs/1/100') Логи
+         if user === 'guest'
+            li
+               a(href='/login')
+                  i.glyphicon.glyphicon-log-in
+                  span.nav-label Вход
+         else
+            li
+               a(href='/logout')
+                  i.glyphicon.glyphicon-log-out
+                  span.nav-label Выход

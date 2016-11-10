@@ -1,0 +1,9 @@
+{
+  "devel-port": 3000,
+  "production-port": 80,
+  "version": "2.5.6",
+  "mongoose": {
+    "uri" : "mongodb://localhost/quest"
+  },
+  "log_expires" : 36000
+}

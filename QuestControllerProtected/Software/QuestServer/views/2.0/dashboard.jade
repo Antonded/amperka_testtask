@@ -1,0 +1,44 @@
+//
+   Created by danilaeremin on 10.01.16.
+
+extends main
+
+block append content
+    .row
+        - for (var q = 0; q < rooms.length; q ++)
+            .col-md-6
+                .panel.panel-default
+                    .panel-heading
+                        = rooms[q].name
+                    .panel-body
+                        table.table.no-margn
+                            - for (var e = 0; e < scripts[rooms[q].id].events.length; e++)
+                                - if (scripts[rooms[q].id].events[e].type === 'action') continue
+                                - if (scripts[rooms[q].id].events[e].type === 'help') continue
+                                tr(id=rooms[q].id+'script'+scripts[rooms[q].id].events[e].id)
+                                    td
+                                        = scripts[rooms[q].id].events[e].description
+                                    if scripts[rooms[q].id].events[e].status === 'ok'
+                                        td.text-success(id=rooms[q].id+'scriptStatus'+scripts[rooms[q].id].events[e].id) Пройдено
+                                    else
+                                        td.text-danger(id=rooms[q].id+'scriptStatus'+scripts[rooms[q].id].events[e].id) Не пройдено
+
+
+block append script
+    script(type='text/javascript').
+        $('#left-menu-dashboard').addClass('active');
+
+        socket.on('script changed', function(msg){
+            var obj = $('#' + msg.room + 'scriptStatus' + msg.scriptEvent.id);
+
+            if (msg.scriptEvent.status == 'ok') {
+                obj.text('Пройдено');
+                obj.removeClass('text-danger');
+                obj.addClass('text-success');
+            } else {
+                // reset (only after start script)
+                obj.text('Не пройдено');
+                obj.removeClass('text-success');
+                obj.addClass('text-danger');
+            }
+        });

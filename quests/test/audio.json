@@ -1,0 +1,18 @@
+{
+  "id" : "Audio",
+  "port" : 8843,
+  "serverPort" : 8840,
+  "serverIp" : "10.0.0.1",
+
+  "zones":
+  [
+  ],
+
+  "backgroundZones" : [
+
+  ],
+"tracklist" : [],
+  "tracks" :
+  {
+  }
+}

@@ -1,0 +1,128 @@
+//
+   Created by danilaeremin on 13.01.16.
+
+include ../IO
+    
+extends main
+
+block append content
+    hr
+    .page-header
+        h1 Датчики
+    .row
+        .col-md-12
+            ul#nodes.nav.nav-tabs(role='tablist')
+                - var activeTab = 0;
+                - for (var i = 0; i < room.nodes.length; i++)
+                    - if (room.nodes[i].sensors.length == 0)
+                        - continue
+                    - var active = "active";
+                    - if (activeTab > 0) active = "";
+                    - activeTab ++
+                    li(class=active)
+                        a(data-toggle='tab', role='tab', href='#node'+room.nodes[i].id)
+                            small
+                                = room.nodes[i].description
+                                span.badge.bg-success(style="background-color:#70ba63;margin-left:10px")
+                                    span(id='uptime'+room.nodes[i].id)
+                                        if room.nodes[i].uptime
+                                            = Math.floor(Number(room.nodes[i].uptime)/1000)
+                                        else
+                                            = '0'
+                                    = ' s'
+            #nodesContent.tab-content
+                - var activeTab = 0;
+                - for (var i = 0; i < room.nodes.length; i++)
+                    - if (room.nodes[i].sensors.length == 0)
+                        - continue
+                    - var active = "active in";
+                    - if (activeTab > 0) active = "";
+                    - activeTab ++
+                    .tab-pane.tabs-up.fade.panel.panel-default(id='node'+room.nodes[i].id, class=active)
+                        .panel-body
+                            table.table.no-margn
+                                tbody
+                                    - for (var j = 0; j < room.nodes[i].sensors.length; j++)
+                                        - var sensor = room.nodes[i].sensors[j];
+                                        tr
+                                            td
+                                                small
+                                                = sensor.description
+                                            td(align="right")
+                                                if lib.sensors[sensor.type].UI == 'on-off' || lib.sensors[sensor.type].UI == 'states'
+                                                    .btn-toolbar.showcase-btn.pull-right(role='toolbar')
+                                                        .btn-group.btn-group-sm
+                                                            - for (var l = 0; l < lib.sensors[sensor.type].visible.length; l++)
+                                                                if sensor.state === lib.sensors[sensor.type].states[l]
+                                                                    button.btn.btn-info.btn-sm(type='button', value=lib.sensors[sensor.type].states[l], id=room.nodes[i].id + 'toolbar' + sensor.id+l)
+                                                                        = lib.sensors[sensor.type].visible[l]
+                                                                else
+                                                                    button.btn.btn-default.btn-sm(type='button', value=lib.sensors[sensor.type].states[l], id=room.nodes[i].id + 'toolbar' + sensor.id+l)
+                                                                        = lib.sensors[sensor.type].visible[l]
+                                                else if lib.sensors[sensor.type].UI == 'customStates'
+                                                        //
+                                                else if lib.sensors[sensor.type].UI == 'slider'
+                                                        //
+                                                else if lib.sensors[sensor.type].UI == 'textfield'
+                                                    .pull-right(id=room.nodes[i].id + 'textfield' + sensor.id)
+                                                        sensor.state
+block append script
+    script(type='text/javascript').
+        $('#left-menu-quest').addClass('active');
+        $('#left-menu-quest-sensors').addClass('active');
+
+        var roomId = !{JSON.stringify(room.id)};
+        var UIlib = !{JSON.stringify(lib)};
+
+        socket.on('uptime', function(msg){
+            if (msg.room == roomId) {
+                $("#uptime"+msg.nodeId).text(Math.floor(Number(msg.uptime)/1000));
+            }
+        });
+
+        socket.on('input changed', function(msg){
+            if (msg.room == roomId) {
+                var nodeId = msg.node.id;
+                var sensorId = msg.sensor.id;
+                var state = msg.sensor.state;
+
+                switch (UIlib.sensors[msg.sensor.type].UI) {
+                    case 'on-off' : {
+                        for (var i = 0; i < 2; i++) {
+                            var obj = $("#"+nodeId+"toolbar"+sensorId+i);
+                            if (obj.val() !== state ) {
+                                obj.removeClass("btn-info");
+                                obj.addClass("btn-default");
+                            } else {
+                                obj.removeClass("btn-default");
+                                obj.addClass("btn-info");
+                            }
+
+                        }
+
+                        break;
+                    }
+
+                    case 'states' : {
+                        for (var i = 0; i < UIlib.sensors[msg.sensor.type].states.length; i++) {
+                            var obj = $("#"+nodeId+"toolbar"+sensorId+i);
+                            if (obj.val() !== state ) {
+                                obj.removeClass("btn-info");
+                                obj.addClass("btn-default");
+                            } else {
+                                obj.removeClass("btn-default");
+                                obj.addClass("btn-info");
+                            }
+                        }
+
+                        break;
+                    }
+
+                    case 'textfield' : {
+                        $("#"+nodeId+"textfield"+sensorId).text(state);
+
+                        break;
+                    }
+                }
+            }
+        });

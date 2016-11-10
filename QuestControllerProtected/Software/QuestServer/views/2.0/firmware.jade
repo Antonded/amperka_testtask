@@ -1,0 +1,108 @@
+//
+   Created by danilaeremin on 05.02.16.
+
+mixin nodeFirmware(node, nodeObj)
+   .col-lg-3(id="dropzone"+node)
+      .panel.panel-default
+         .panel-heading
+            = node
+         .panel-body
+            center(style="margin-left:-5px;margin-top:-5px")
+               span(id=node+'status')
+                  if nodeObj.status == 'updating'
+                     = 'Обновляется'
+                  else if nodeObj.status == 'updated'
+                     = 'Обновлен'
+                  else if nodeObj.status == 'waiting'
+                     = 'Ожидает обновления'
+                  else if nodeObj.status == 'firmware'
+                     = 'Загрузите прошивку'
+
+               .btn.btn-success.fileinput-button(style="margin-top:10px")
+                  i.glyphicon.glyphicon-plus
+                  | &nbsp;Выбрать файл
+                  input(type='file', name='files[]', id=node, data-url="/firmware/upload/"+nodeObj.room+"/"+node)
+               .btn-group(style="margin-top:10px")
+                  button.btn.btn-danger(type='button', id='reboot', data-toggle='modal', data-target='#rebootModal'+node) Перезагрузить контроллер
+
+extends main
+block append content
+   hr
+   .page-header
+      h1 Сервер обновления
+
+   .progress(id='progress')
+      .progress-bar.progress-bar-success(role='progressbar')
+
+   - var nodes = Object.keys(nodesToUpdate);
+   .row
+      - for (var i = 0; i < nodes.length; i++)
+         +nodeFirmware(nodes[i], nodesToUpdate[nodes[i]])
+   - for (var i = 0; i < nodes.length; i++)
+      .modal.fade(tabindex='-1', role='dialog', aria-labelledby='rebootModal', aria-hidden='true', id="rebootModal" + nodes[i])
+         .modal-dialog
+            .modal-content
+               .modal-header
+                  button.close(type='button', data-dismiss='modal')
+                     span(aria-hidden='true') ×
+                     span.sr-only Close
+                  h4.modal-title(id="rebootModalLabel" + nodes[i])
+                     = "Перезагрузка контроллера"
+               .modal-body
+                  p
+                     = "Вы действительно хотите перезагрузить контроллер?"
+               .modal-footer
+                  button.btn.btn-default(type='button', data-dismiss='modal') Отменить!
+                  button.btn.btn-primary(type='button', data-dismiss='modal', onclick="rebootNode(\"" +nodesToUpdate[nodes[i]].room + "\",\""+ nodes[i] + "\");") Перезагрузить!
+
+
+
+
+
+block append script
+   script(src='/assets/js/plugins/file-upload/vendor/jquery.ui.widget.js')
+   script(src='/assets/js/plugins/file-upload/jquery.iframe-transport.js')
+   script(src='/assets/js/plugins/file-upload/jquery.fileupload.js')
+
+   script(type='text/javascript').
+      $("#left-menu-administration").toggleClass('active');
+      $("#left-menu-administration-firmware").toggleClass('active');
+
+      var nodes = !{JSON.stringify(nodesToUpdate)};
+
+      var rebootNode = function (roomId, nodeId) {
+         socket.emit('reset node', "{\"room\":\"" + roomId + "\", \"node\": \"" + nodeId + "\"}");
+      };
+
+      var setProgress = function (progressId, progress) {
+         $('#'+progressId+' .progress-bar').css(
+                 'width',
+                 progress + '%'
+         );
+      };
+
+      for (var node in nodes) {
+         $('#'+node).fileupload({ dataType: 'json',
+            dropZone : $('#dropzone'+node),
+            progressall: function (e, data) {
+               console.log(data);
+               var progress = parseInt(data.loaded / data.total * 100, 10);
+               setProgress('progress', progress);
+            }});
+      }
+
+      socket.on('firmware', function(msg){
+         var text = '';
+
+         if (msg.status == 'updating')
+            text = 'Обновляется';
+         else if (msg.status == 'updated')
+            text = 'Обновлен';
+         else if (msg.status == 'waiting')
+            text = 'Ожидает обновления';
+         else if (msg.status == 'firmware')
+            text = 'Ожидается загрузка прошивки' ;
+
+         $("#"+msg.node+"status").text(text);
+      });
+

@@ -1,0 +1,24 @@
+//
+   Created by danilaeremin on 30.12.15.
+
+doctype html
+html
+   head
+      meta(charset='utf-8')
+      meta(http-equiv='X-UA-Compatible', content='IE=edge,chrome=1')
+      title RTC stream
+      meta(name='description', content='RTC stream')
+      meta(name='viewport', content='width=device-width')
+      script(type='text/javascript').
+         var audioDevice = !{JSON.stringify(device)};
+   body
+      button#start-record Говорить
+      button#stop-record(disabled='') Остановить
+      script(src='/vendor/StereoRecorder.js')
+      script(src='/socket.io/socket.io.js')
+      script.
+         var socket = io();
+         var onAudioProcessCallback = function (mono) {
+            socket.emit('RTC stream', "{\"mono\":" + JSON.stringify(mono) + ", \"device\" : \""+audioDevice+"\"}");
+         };
+         initQuestRTC(onAudioProcessCallback);
